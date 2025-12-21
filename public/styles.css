@@ -1,0 +1,375 @@
+:root {
+  --bg:#f7f7f7;
+  --card:#fff;
+  --text:#111;
+  --muted:#666;
+  --border:#e5e5e5;
+  --primary:#111;
+  --okbg:#e7f7ee;
+  --ok:#065f46;
+  --warnbg:#fff7ed;
+  --warn:#92400e;
+  --err:#7f1d1d;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin:0;
+  font-family: system-ui, Arial;
+  background: var(--bg);
+  color: var(--text);
+}
+
+.wrap {
+  max-width: 920px;
+  margin: 0 auto;
+  padding: 16px;
+}
+
+.card {
+  background: var(--card);
+  border:1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+}
+
+h1,h2,h3 { margin: 0 0 8px; }
+small { color: var(--muted); }
+
+.row {
+  display:flex;
+  gap:10px;
+  flex-wrap: wrap;
+  align-items:center;
+}
+
+input, button {
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 15px;
+}
+
+input {
+  border:1px solid #ddd;
+  min-width: 240px;
+  flex:1;
+  background:#fff;
+}
+
+button {
+  border:0;
+  background: var(--primary);
+  color:#fff;
+  cursor:pointer;
+  font-weight: 700;
+}
+
+button.secondary {
+  background:#fff;
+  color:#111;
+  border:1px solid #444;
+}
+
+button.ghost {
+  background: transparent;
+  color:#111;
+  border:1px solid #ddd;
+}
+
+.msg {
+  margin-top: 10px;
+  font-weight: 600;
+}
+
+.msg.err { color: var(--err); }
+.msg.ok  { color: var(--ok); }
+
+a { color: inherit; }
+
+.hr { height:1px; background: var(--border); margin: 12px 0; }
+
+/* Step layout */
+.steps {
+  display:grid;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.step {
+  border:1px solid var(--border);
+  border-radius: 14px;
+  padding: 14px;
+  background:#fff;
+}
+
+.stepHead {
+  display:flex;
+  gap: 10px;
+  align-items: baseline;
+  justify-content: space-between;
+  flex-wrap: wrap;
+}
+
+.stepNum {
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  width: 26px;
+  height: 26px;
+  border-radius: 999px;
+  background:#111;
+  color:#fff;
+  font-weight: 800;
+  font-size: 13px;
+}
+
+.badge {
+  font-size: 12px;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border:1px solid var(--border);
+  background:#f3f4f6;
+  color:#111;
+}
+
+.badge.ok { background: var(--okbg); color: var(--ok); border-color:#a7f3d0; }
+.badge.warn { background: var(--warnbg); color: var(--warn); border-color:#fed7aa; }
+
+.helper {
+  margin-top: 6px;
+  color: var(--muted);
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+/* App list (kept for later) */
+.list { margin-top: 12px; display:grid; gap: 10px; }
+.item {
+  display:flex;
+  justify-content: space-between;
+  align-items:center;
+  gap:10px;
+  padding: 12px;
+  border:1px solid var(--border);
+  border-radius: 12px;
+  background:#fff;
+}
+.pill {
+  font-size: 12px;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 999px;
+  border:1px solid var(--border);
+  background:#f3f4f6;
+}
+.pill.live { border-color:#a7f3d0; background: var(--okbg); color: var(--ok); }
+
+
+/* --- AuDiX live controls --- */
+.btnStart {
+  background: #16a34a;   /* green */
+  color: #fff;
+  border: 1px solid #148a3f;
+}
+
+.btnStop {
+  background: #dc2626;   /* red */
+  color: #fff;
+  border: 1px solid #b91c1c;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+  transform: none !important;
+  filter: grayscale(20%);
+}
+
+.pillOff {
+  background: #f3f4f6;
+  color: #374151;
+  border-color: #e5e7eb;
+}
+
+.pillLive {
+  background: #dcfce7;
+  color: #166534;
+  border-color: #86efac;
+}
+
+
+/* ---------- AuDiX App layout ---------- */
+.audixApp { padding: 18px; }
+
+.appHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 14px;
+}
+
+.headerRight {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.appGrid {
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 14px;
+  margin-top: 14px;
+}
+
+@media (max-width: 980px) {
+  .appGrid { grid-template-columns: 1fr; }
+}
+
+/* panels */
+.panel {
+  border: 1px solid #eee;
+  border-radius: 14px;
+  padding: 14px;
+  background: #fff;
+}
+
+.divider {
+  height: 1px;
+  background: #eee;
+  margin: 12px 0;
+}
+
+.statusLine {
+  margin-top: 6px;
+  font-weight: 800;
+}
+
+/* checkbox row */
+.sourceRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.check {
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
+  font-size: 14px;
+}
+
+.sysGroup {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+/* Mix controls */
+.mixGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.2fr;
+  gap: 12px;
+  align-items: end;
+}
+
+@media (max-width: 520px) {
+  .mixGrid { grid-template-columns: 1fr 1fr; }
+  .pttCol { grid-column: 1 / -1; }
+}
+
+.mixCol {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+
+.mixTitle { font-weight: 800; }
+.mixValue { font-weight: 800; opacity: 0.9; }
+
+/* Vertical sliders */
+.vRange {
+  width: 44px;
+  height: 160px;
+  writing-mode: bt-lr;  
+  appearance: none;       /* vertical */
+  -webkit-appearance: slider-vertical;
+}
+
+/* Push-to-talk round button */
+.pttBtn {
+  width: 84px;
+  height: 84px;
+  border-radius: 999px;
+  border: 1px solid #111;
+  background: #111;
+  color: #fff;
+  font-weight: 900;
+  cursor: pointer;
+  user-select: none;
+  touch-action: manipulation;
+}
+.pttBtn:active { transform: scale(0.98); }
+
+/* Switch */
+.switch {
+  position: relative;
+  width: 54px;
+  height: 30px;
+  display: inline-block;
+}
+.switch input { display: none; }
+.switch .slider {
+  position: absolute;
+  cursor: pointer;
+  inset: 0;
+  background: #e5e7eb;
+  border-radius: 999px;
+  transition: 0.2s;
+}
+.switch .slider:before {
+  content: "";
+  position: absolute;
+  height: 24px;
+  width: 24px;
+  left: 3px;
+  top: 3px;
+  background: white;
+  border-radius: 999px;
+  transition: 0.2s;
+  border: 1px solid #ddd;
+}
+.switch input:checked + .slider { background: #22c55e; }
+.switch input:checked + .slider:before { transform: translateX(24px); }
+
+/* Pills */
+.pill {
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-weight: 900;
+  font-size: 12px;
+  border: 1px solid transparent;
+}
+.pillOff {
+  background: #f3f4f6;
+  color: #374151;
+  border-color: #e5e7eb;
+}
+.pillLive {
+  background: #dcfce7;
+  color: #166534;
+  border-color: #86efac;
+}
+
+/* Buttons */
+.btnStart { background: #16a34a; color:#fff; border: 1px solid #148a3f; }
+.btnStop  { background: #dc2626; color:#fff; border: 1px solid #b91c1c; }
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}

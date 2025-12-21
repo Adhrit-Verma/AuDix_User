@@ -1,0 +1,121 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AuDiX</title>
+  <link rel="stylesheet" href="/public/styles.css">
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="row" style="justify-content:space-between;">
+        <div>
+          <h1>AuDiX</h1>
+          <small>Society intranet audio network</small>
+        </div>
+        <div class="row">
+          <a href="/login"><button class="secondary">Login</button></a>
+        </div>
+      </div>
+
+      <div class="hr"></div>
+
+      <div class="helper">
+        Follow these steps in order. You only do Setup once. After that, just Login.
+      </div>
+
+      <div class="steps">
+
+        <!-- STEP 1 -->
+        <div class="step">
+          <div class="stepHead">
+            <div class="row" style="gap:10px; align-items:center;">
+              <span class="stepNum">1</span>
+              <div style="font-weight:800; font-size:16px;">Request Access (Registration)</div>
+              <span class="badge warn">First time</span>
+            </div>
+            <small>Submit once per flat</small>
+          </div>
+
+          <div class="helper">
+            Enter your flat number and name. After submitting, ask AuDiX admin to approve your request.
+          </div>
+
+          <div class="row" style="margin-top:12px;">
+            <input id="reg_flat_id" placeholder="Flat ID (e.g. A-502)">
+            <input id="reg_name" placeholder="Your name">
+            <button id="btnReq">Submit Request</button>
+          </div>
+
+          <div class="msg" id="msgReg"></div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div class="step">
+          <div class="stepHead">
+            <div class="row" style="gap:10px; align-items:center;">
+              <span class="stepNum">2</span>
+              <div style="font-weight:800; font-size:16px;">Get your Flat Code</div>
+            </div>
+            <small>Admin provides code</small>
+          </div>
+
+          <div class="helper">
+            Once approved, ask AuDiX admin for a <b>one-time flat code</b> to set your PIN.
+          </div>
+
+          <div class="row" style="margin-top:12px;">
+            <button class="ghost" disabled style="opacity:.7; cursor:not-allowed;">Admin step</button>
+            <small>(You don’t do anything here)</small>
+          </div>
+        </div>
+
+        <!-- STEP 3 -->
+        <div class="step">
+          <div class="stepHead">
+            <div class="row" style="gap:10px; align-items:center;">
+              <span class="stepNum">3</span>
+              <div style="font-weight:800; font-size:16px;">Setup PIN (One-time)</div>
+              <span class="badge warn">Required</span>
+            </div>
+            <small>Use the flat code</small>
+          </div>
+
+          <div class="helper">
+            Use the one-time flat code to set your <b>4-digit PIN</b>. You can also set an optional password.
+          </div>
+
+          <div class="row" style="margin-top:12px;">
+            <a href="/setup"><button>Open Setup</button></a>
+            <small>Then come back and login.</small>
+          </div>
+        </div>
+
+        <!-- STEP 4 -->
+        <div class="step">
+          <div class="stepHead">
+            <div class="row" style="gap:10px; align-items:center;">
+              <span class="stepNum">4</span>
+              <div style="font-weight:800; font-size:16px;">Login</div>
+              <span class="badge ok">Daily use</span>
+            </div>
+            <small>Flat ID + PIN</small>
+          </div>
+
+          <div class="helper">
+            After setup, login using your Flat ID and PIN. If you set a password, it will be required.
+          </div>
+
+          <div class="row" style="margin-top:12px;">
+            <a href="/login"><button class="secondary">Go to Login</button></a>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="/public/user.js"></script>
+</body>
+</html>

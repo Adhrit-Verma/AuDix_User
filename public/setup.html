@@ -1,0 +1,111 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AuDiX Setup</title>
+  <link rel="stylesheet" href="/public/styles.css">
+  <style>
+    .stepBox { border:1px solid var(--border); border-radius: 14px; padding: 14px; background:#fff; }
+    .stepBox.disabled { opacity: .55; pointer-events: none; }
+    .stepTitle { display:flex; justify-content:space-between; align-items:baseline; gap: 10px; flex-wrap: wrap; }
+    .stepNum { display:inline-flex; align-items:center; justify-content:center; width:26px; height:26px; border-radius:999px; background:#111; color:#fff; font-weight:800; font-size:13px; }
+    .stepHeadLeft { display:flex; gap:10px; align-items:center; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="row" style="justify-content:space-between;">
+        <div>
+          <h2>Setup</h2>
+          <small>Do this once. After setup, you’ll login normally.</small>
+        </div>
+        <a href="/login"><button class="secondary">Back to Login</button></a>
+      </div>
+
+      <div class="hr"></div>
+
+      <!-- STEP 1 -->
+      <div class="stepBox" id="step1">
+        <div class="stepTitle">
+          <div class="stepHeadLeft">
+            <span class="stepNum">1</span>
+            <div style="font-weight:800;">Request access</div>
+          </div>
+          <small id="s1state">Required</small>
+        </div>
+
+        <div class="helper">
+          Enter your Flat ID and Name. This sends a request to admin for approval.
+        </div>
+
+        <div class="row" style="margin-top:12px;">
+          <input id="s1_flat" placeholder="Flat ID (e.g. A-502)">
+          <input id="s1_name" placeholder="Your name">
+          <button id="btnS1">Submit Request</button>
+        </div>
+
+        <div class="msg" id="msgS1"></div>
+      </div>
+
+      <div style="height:10px;"></div>
+
+      <!-- STEP 2 -->
+      <div class="stepBox disabled" id="step2">
+        <div class="stepTitle">
+          <div class="stepHeadLeft">
+            <span class="stepNum">2</span>
+            <div style="font-weight:800;">Wait for approval</div>
+          </div>
+          <small id="s2state">Locked</small>
+        </div>
+
+        <div class="helper">
+          After approval, admin will generate your one-time flat code.
+          Click “Check status” here. If approved, Step 3 unlocks.
+        </div>
+
+        <div class="row" style="margin-top:12px;">
+          <button class="secondary" id="btnCheck">Check status</button>
+        </div>
+
+        <div class="msg" id="msgS2"></div>
+      </div>
+
+      <div style="height:10px;"></div>
+
+      <!-- STEP 3 -->
+      <div class="stepBox disabled" id="step3">
+        <div class="stepTitle">
+          <div class="stepHeadLeft">
+            <span class="stepNum">3</span>
+            <div style="font-weight:800;">Set PIN (and optional password)</div>
+          </div>
+          <small id="s3state">Locked</small>
+        </div>
+
+        <div class="helper">
+          Ask admin for your one-time flat code. Enter it below to set your 4-digit PIN.
+        </div>
+
+        <div class="row" style="margin-top:12px;">
+          <input id="s3_flat" placeholder="Flat ID (e.g. A-502)">
+          <input id="s3_code" placeholder="One-time flat code (e.g. ABCD-2345)">
+        </div>
+
+        <div class="row" style="margin-top:10px;">
+          <input id="s3_pin4" placeholder="New 4-digit PIN" inputmode="numeric" maxlength="4">
+          <input id="s3_pass" placeholder="Optional password" type="password">
+          <button id="btnS3">Set credentials</button>
+        </div>
+
+        <div class="msg" id="msgS3"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <script src="/public/user.js"></script>
+</body>
+</html>

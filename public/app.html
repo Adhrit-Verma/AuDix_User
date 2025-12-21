@@ -1,0 +1,128 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>AuDiX</title>
+  <link rel="stylesheet" href="/public/styles.css" />
+</head>
+<body>
+  <div class="page">
+    <div class="card audixApp">
+
+      <!-- Header -->
+      <div class="appHeader">
+        <div>
+          <div class="title">Live Stations</div>
+          <div class="small" id="me">Loading...</div>
+          <div class="statusLine" id="myStatus"></div>
+        </div>
+
+        <div class="headerRight">
+          <div class="pill pillOff" id="livePill">OFF</div>
+          <button class="btn" id="logoutBtn">Logout</button>
+        </div>
+      </div>
+
+      <!-- Main grid -->
+      <div class="appGrid">
+
+        <!-- LEFT: Broadcast controls -->
+        <div class="panel">
+          <div class="row" style="justify-content:space-between; align-items:center;">
+            <div class="small" style="font-weight:800;">Broadcast</div>
+            <div class="small" id="timer">00:00:00</div>
+          </div>
+
+          <div class="row" style="gap:10px; margin-top:10px;">
+            <button class="btn btnStart" id="btnStart">Start</button>
+            <button class="btn btnStop" id="btnStop">Stop</button>
+            <div class="small" id="hint" style="margin-left:auto;"></div>
+          </div>
+
+          <div class="msg" id="msg" style="margin-top:10px;"></div>
+
+          <div class="divider"></div>
+
+          <!-- Source toggles -->
+          <div class="sourceRow">
+            <label class="check">
+              <input type="checkbox" id="micEnable" checked />
+              <span>Mic</span>
+            </label>
+
+            <div class="sysGroup">
+              <label class="check">
+                <input type="checkbox" id="sysEnable" />
+                <span>System audio (desktop)</span>
+              </label>
+
+              <button class="btn" id="btnSysPick">Pick</button>
+            </div>
+          </div>
+
+          <!-- Selected system audio -->
+          <div class="small" id="sysSelected" style="margin-top:6px; opacity:0.9;">
+            System audio: Not selected
+          </div>
+
+          <div class="divider"></div>
+
+          <!-- Volume controls -->
+          <div class="mixGrid">
+            <div class="mixCol">
+              <div class="small mixTitle">Mic level</div>
+              <input class="vRange" type="range" id="micLevel" min="0" max="200" value="100" />
+              <div class="small mixValue" id="micLevelVal">100%</div>
+            </div>
+
+            <div class="mixCol">
+              <div class="small mixTitle">System level</div>
+              <input class="vRange" type="range" id="sysLevel" min="0" max="200" value="70" />
+              <div class="small mixValue" id="sysLevelVal">70%</div>
+            </div>
+
+            <div class="mixCol pttCol">
+              <div class="small mixTitle">Push-to-talk</div>
+
+              <label class="switch">
+                <input type="checkbox" id="pttEnable" checked />
+                <span class="slider"></span>
+              </label>
+
+              <button class="pttBtn" id="btnHoldTalk" title="Hold to talk">
+                Hold
+              </button>
+
+              <div class="small" style="text-align:center; opacity:0.85;">
+                Hold button or Space key
+              </div>
+            </div>
+          </div>
+
+          <div class="small" style="margin-top:10px; opacity:0.85;">
+            Tip (desktop): use “Share tab” and enable “Share audio” when picking system audio.
+          </div>
+
+          <audio id="player" autoplay></audio>
+        </div>
+
+        <!-- RIGHT: Stations list -->
+        <div class="panel">
+          <div class="row" style="justify-content:space-between; align-items:center;">
+            <div class="small" style="font-weight:800;">Stations</div>
+            <div class="small" id="listenStatus">Not listening</div>
+          </div>
+
+          <div id="list" style="margin-top:10px;">
+            <div class="item">Loading...</div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <script src="/public/user.js"></script>
+</body>
+</html>
