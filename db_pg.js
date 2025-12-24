@@ -1,6 +1,11 @@
 import pg from "pg";
 const { Pool } = pg;
 
+// ✅ Force-disable TLS verification (prevents Supabase pooler chain error on Render)
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+console.log("[DB] TLS verify disabled =", process.env.NODE_TLS_REJECT_UNAUTHORIZED);
+
+
 export const pool = new Pool({
   connectionString: process.env.DATABASE_URL,
   // Render Postgres requires SSL

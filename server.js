@@ -3,11 +3,12 @@ import crypto from "crypto";
 import "dotenv/config";
 import express from "express";
 import session from "express-session";
+import pgSession from "connect-pg-simple";
 import path from "path";
 import { fileURLToPath } from "url";
 
 // ✅ Postgres DB helpers
-import { query, migrate } from "./db_pg.js";
+import { pool, query, migrate } from "./db_pg.js";
 
 // ✅ Postgres user DB functions
 import {
@@ -40,6 +41,10 @@ await migrate();
 console.log("[DB] Postgres connected & migrated");
 
 const app = express();
+app.set("trust proxy", 1);
+
+// ✅ Persist sessions in Postgres (fixes MemoryStore warning)
+const PgSession = pgSession(session);
 
 app.use(
   session({
@@ -47,12 +52,22 @@ app.use(
     secret: SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
+
+    store: new PgSession({
+      pool,
+      tableName: "user_sessions",
+      createTableIfMissing: true
+    }),
+
     cookie: {
       httpOnly: true,
-      sameSite: "lax"
+      sameSite: "lax",
+      secure: process.env.NODE_ENV === "production", // Render
+      maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days default
     }
   })
 );
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
