@@ -295,9 +295,8 @@ a { color: inherit; }
 .vRange {
   width: 44px;
   height: 160px;
-  writing-mode: bt-lr;  
-  appearance: none;       /* vertical */
-  -webkit-appearance: slider-vertical;
+  writing-mode: vertical-lr;
+  direction: rtl;
 }
 
 /* Push-to-talk round button */
