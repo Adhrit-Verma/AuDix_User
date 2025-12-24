@@ -326,7 +326,6 @@
       // Show label
       const label = a.label || 'System audio';
       if (sysSelectedEl) sysSelectedEl.textContent = `System audio: ${label}`;
-      if (sysSelectedEl) sysSelectedEl.textContent = 'System audio: Not selected';
     }
 
     let broadcastStartedAt = null;

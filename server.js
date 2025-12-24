@@ -56,8 +56,9 @@ app.use(
     store: new PgSession({
       pool,
       tableName: "user_sessions",
-      createTableIfMissing: true
+      createTableIfMissing: false, // ✅ IMPORTANT: stop auto-creating (prevents session_pkey collision)
     }),
+
 
     cookie: {
       httpOnly: true,
