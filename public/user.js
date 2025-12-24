@@ -503,6 +503,11 @@
       };
 
       signalWS?.send(JSON.stringify({ type: 'listen:join', targetFlat }));
+      // ✅ Update presence state so /api/live + admin dashboard show listener counts
+      if (window.audixWS && window.audixWS.readyState === 1) {
+        window.audixWS.send(JSON.stringify({ type: 'listen:start', targetFlat }));
+      }
+      if (listenStatusEl) listenStatusEl.textContent = `Listening to ${targetFlat}`;
     }
 
 
@@ -510,6 +515,12 @@
       if (signalWS && signalWS.readyState === 1 && listeningTo) {
         signalWS.send(JSON.stringify({ type: 'listen:leave' }));
       }
+      // ✅ Update presence state (stop listening)
+      if (window.audixWS && window.audixWS.readyState === 1 && listeningTo) {
+        window.audixWS.send(JSON.stringify({ type: 'listen:stop' }));
+      }
+      if (listenStatusEl) listenStatusEl.textContent = 'Not listening';
+
       if (listenPC) {
         listenPC.close();
         listenPC = null;
