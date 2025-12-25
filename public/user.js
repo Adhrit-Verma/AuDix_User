@@ -1,5 +1,10 @@
 (() => {
   const byId = (id) => document.getElementById(id);
+  // ✅ Mobile back/forward cache guard (prevents stale login/app pages)
+  window.addEventListener('pageshow', (e) => {
+    if (e.persisted) window.location.reload();
+  });
+
 
   // ---------- HTTP helpers ----------
   async function get(url) {
@@ -14,7 +19,7 @@
   async function post(url, body) {
     const res = await fetch(url, {
       method: 'POST',
-      credentials: 'same-origin',
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(body || {})
     });
@@ -668,9 +673,24 @@
     }
 
     logoutBtn?.addEventListener('click', async () => {
-      try { await post('/api/logout', {}); } catch { }
-      window.location.href = '/login';
+      // 1) Close sockets immediately (prevents ghost "connected" users)
+      try { window.audixWS?.close(1000, 'logout'); } catch { }
+      try { window.signalWS?.close(1000, 'logout'); } catch { }
+
+      // 2) Try logout, but don't hang forever on slow mobile
+      const ctrl = new AbortController();
+      const t = setTimeout(() => ctrl.abort(), 4000);
+
+      try {
+        await fetch('/api/logout', { method: 'POST', credentials: 'include', signal: ctrl.signal });
+      } catch { }
+
+      clearTimeout(t);
+
+      // 3) Hard redirect
+      location.replace('/login');
     });
+
 
     // 1) Must be logged in
     try {

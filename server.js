@@ -231,8 +231,13 @@ app.post("/api/login", async (req, res) => {
 });
 
 app.post("/api/logout", (req, res) => {
-  req.session.destroy(() => res.json({ ok: true }));
+  // Always respond OK + clear cookie (helps mobile + latency)
+  req.session.destroy(() => {
+    res.clearCookie("audix_user_sid", { path: "/" });
+    res.json({ ok: true });
+  });
 });
+
 
 // Internal live snapshot (for admin later; includes IP + listener mapping)
 app.get("/api/internal/live-snapshot", requireLiveToken, (req, res) => {
@@ -296,6 +301,21 @@ wssPresence.on("connection", (ws, req) => {
   };
 
   live.clients.set(ws, client);
+
+  // ✅ Heartbeat: kill "ghost" sockets (mobile tab close, flaky network)
+  ws.isAlive = true;
+  ws.on("pong", () => { ws.isAlive = true; });
+
+  const hb = setInterval(() => {
+    if (ws.isAlive === false) {
+      try { ws.terminate(); } catch { }
+      clearInterval(hb);
+      return;
+    }
+    ws.isAlive = false;
+    try { ws.ping(); } catch { }
+  }, 15000);
+
 
   ws.on("message", (raw) => {
     let msg;
@@ -389,6 +409,7 @@ wssPresence.on("connection", (ws, req) => {
   });
 
   ws.on("close", () => {
+    try { clearInterval(hb); } catch { }
     const c = live.clients.get(ws);
     if (!c) return;
 
@@ -438,6 +459,21 @@ wssSignal.on("connection", (ws, req) => {
     listeningTo: null
   };
   signalClients.set(ws, sc);
+
+  // ✅ Heartbeat for signaling WS too
+  ws.isAlive = true;
+  ws.on("pong", () => { ws.isAlive = true; });
+
+  const hb2 = setInterval(() => {
+    if (ws.isAlive === false) {
+      try { ws.terminate(); } catch { }
+      clearInterval(hb2);
+      return;
+    }
+    ws.isAlive = false;
+    try { ws.ping(); } catch { }
+  }, 15000);
+
 
   safeSend(ws, { type: "hello", id: sc.id });
 
@@ -523,6 +559,8 @@ wssSignal.on("connection", (ws, req) => {
   });
 
   ws.on("close", () => {
+    try { clearInterval(hb2); } catch { }
+
     const c = signalClients.get(ws);
     if (!c) return;
 
