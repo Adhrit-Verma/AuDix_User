@@ -1,11 +1,13 @@
 <!doctype html>
 <html lang="en">
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AuDiX</title>
   <link rel="stylesheet" href="/public/styles.css" />
 </head>
+
 <body>
   <div class="page">
     <div class="card audixApp">
@@ -33,6 +35,20 @@
             <div class="small" style="font-weight:800;">Broadcast</div>
             <div class="small" id="timer">00:00:00</div>
           </div>
+
+          
+          <div class="row" style="justify-content:space-between; align-items:center; margin-top:8px;">
+            <div class="small" id="myListeners">Listeners: 0</div>
+            <div class="small" id="audioHealth">Audio: Unknown</div>
+          </div>
+
+          <div class="audixMeterWrap" style="margin-top:8px;">
+            <div class="audixMeterBar" id="micMeter"></div>
+          </div>
+          <div class="small" style="opacity:.85; margin-top:6px;">
+            Mic meter should move when you speak. If it stays flat, listeners may hear nothing.
+          </div>
+
 
           <div class="row" style="gap:10px; margin-top:10px;">
             <button class="btn btnStart" id="btnStart">Start</button>
@@ -125,4 +141,5 @@
 
   <script src="/public/user.js"></script>
 </body>
+
 </html>

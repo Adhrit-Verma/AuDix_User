@@ -8,7 +8,7 @@
 
   // ---------- HTTP helpers ----------
   async function get(url) {
-    const res = await fetch(url, { credentials: 'same-origin' });
+    const res = await fetch(url, { credentials: 'include' });
     const ct = (res.headers.get('content-type') || '').toLowerCase();
     if (!ct.includes('application/json')) throw new Error('BAD_RESPONSE');
     const data = await res.json();
@@ -239,6 +239,10 @@
     const sysLevelValEl = byId('sysLevelVal');
     const timerEl = byId('timer');
     const listenStatusEl = byId('listenStatus');
+    const myListenersEl = byId('myListeners');
+    const audioHealthEl = byId('audioHealth');
+    const micMeterEl = byId('micMeter');
+
 
     function updateLevelLabels() {
       if (micLevelValEl) micLevelValEl.textContent = `${Number(micLevelEl?.value || 0)}%`;
@@ -271,6 +275,10 @@
     let micGain = null;
     let sysGain = null;
     let dest = null;
+    let micAnalyser = null;
+    let meterRAF = null;
+    let lastMeterMoveAt = 0;
+
     const pcs = new Map(); // listenerId -> RTCPeerConnection
 
     // listener side
@@ -369,8 +377,15 @@
 
       if (micStream) {
         const src = audioCtx.createMediaStreamSource(micStream);
+
+        // analyser for UI meter
+        micAnalyser = audioCtx.createAnalyser();
+        micAnalyser.fftSize = 512;
+
+        src.connect(micAnalyser);
         src.connect(micGain).connect(dest);
       }
+
       if (sysStream) {
         const src = audioCtx.createMediaStreamSource(sysStream);
         src.connect(sysGain).connect(dest);
@@ -379,6 +394,51 @@
       if (pttEnableEl?.checked) micGain.gain.value = 0; // start muted for PTT
       mixedStream = dest.stream;
     }
+
+    function startMicMeter() {
+      stopMicMeter();
+      if (!micAnalyser || !micMeterEl) return;
+
+      const data = new Uint8Array(micAnalyser.frequencyBinCount);
+
+      const tick = () => {
+        try {
+          micAnalyser.getByteTimeDomainData(data);
+          // compute simple peak
+          let peak = 0;
+          for (let i = 0; i < data.length; i++) {
+            const v = Math.abs(data[i] - 128); // centered
+            if (v > peak) peak = v;
+          }
+
+          const pct = Math.min(100, Math.round((peak / 128) * 100));
+          micMeterEl.style.width = `${pct}%`;
+
+          if (pct > 6) lastMeterMoveAt = Date.now();
+
+          // health label only while live
+          if (audioHealthEl) {
+            if (state.myMode !== 'broadcasting') audioHealthEl.textContent = 'Audio: Idle';
+            else {
+              const silentFor = Date.now() - lastMeterMoveAt;
+              audioHealthEl.textContent = silentFor > 4000 ? 'Audio: Silent' : 'Audio: OK';
+            }
+          }
+        } catch { }
+
+        meterRAF = requestAnimationFrame(tick);
+      };
+
+      lastMeterMoveAt = Date.now();
+      meterRAF = requestAnimationFrame(tick);
+    }
+
+    function stopMicMeter() {
+      if (meterRAF) cancelAnimationFrame(meterRAF);
+      meterRAF = null;
+      if (micMeterEl) micMeterEl.style.width = '0%';
+    }
+
 
     function teardownMixerAndStopTracks() {
       // Close peer connections
@@ -392,6 +452,7 @@
       // Close audio context
       if (audioCtx) audioCtx.close().catch(() => { });
       audioCtx = null;
+      micAnalyser = null;
       dest = null;
       micGain = null;
       sysGain = null;
@@ -609,6 +670,17 @@
       if (btnStart) btnStart.disabled = !connected || isLive;
       if (btnStop) btnStop.disabled = !connected || !isLive;
 
+      // ✅ Lock risky controls while live (prevents stream breakage)
+      if (micEnableEl) micEnableEl.disabled = isLive;
+      if (sysEnableEl) sysEnableEl.disabled = isLive;
+      if (btnSysPick) btnSysPick.disabled = isLive;
+      if (pttEnableEl) pttEnableEl.disabled = isLive;
+
+      // also visually dim the row
+      const srcRow = document.querySelector('.sourceRow');
+      if (srcRow) srcRow.style.opacity = isLive ? '0.65' : '1';
+
+
       if (hintEl) {
         if (!connected) hintEl.textContent = 'Connecting...';
         else if (isLive) hintEl.textContent = 'You are live now.';
@@ -640,7 +712,10 @@
           <div class="item" style="display:flex; justify-content:space-between; gap:12px; align-items:center;">
             <div>
               <b>${s.name}</b>
-              <div class="small">${s.listeners} listening</div>
+              <div class="small">
+                ${s.listeners} listening
+                ${listeningTo === s.id ? `<span class="audixTag audixTagOn">You are listening</span>` : ``}
+              </div>
             </div>
             <div style="display:flex; gap:8px;">
               <button class="btn" data-listen="${s.id}">
@@ -742,6 +817,7 @@
         }
 
         buildMixer();
+        startMicMeter();
         setGainsFromUI();
 
         await ensureSignalWS('broadcaster');
@@ -769,6 +845,7 @@
 
       stopStatusLoop();
       teardownMixerAndStopTracks();
+      stopMicMeter();
       stopTimer();
 
 
@@ -783,7 +860,13 @@
     async function refreshStations() {
       try {
         const data = await get('/api/live');
-        renderStations(data.stations || []);
+        const st = data.stations || [];
+        renderStations(st);
+
+        // ✅ show my listener count
+        const mine = st.find(x => x.id === state.myFlat);
+        if (myListenersEl) myListenersEl.textContent = `Listeners: ${mine?.listeners ?? 0}`;
+
       } catch { }
     }
 
