@@ -821,6 +821,23 @@
         state.myMode = 'idle';
         renderSelf();
       };
+      window.audixWS.onmessage = (ev) => {
+        let msg;
+        try { msg = JSON.parse(ev.data); } catch { return; }
+
+        if (msg.type === 'broadcast:denied' && msg.reason === 'ALREADY_BROADCASTING') {
+          // revert UI + stop capture to avoid confusion
+          stopStatusLoop();
+          teardownMixerAndStopTracks();
+          stopMicMeter();
+          stopTimer();
+
+          state.myMode = 'idle';
+          setMsgLocal('Broadcast denied: this flat is already live on another device.');
+          renderSelf();
+        }
+      };
+
     } catch {
       state.wsReady = false;
       renderSelf();
@@ -850,11 +867,19 @@
         await ensureSignalWS('broadcaster');
 
         window.audixWS.send(JSON.stringify({ type: 'broadcast:start' }));
-        state.myMode = 'broadcasting';
-        setMsgLocal('You are live now.');
+        setMsgLocal('Starting broadcast...');
         renderSelf();
 
         startStatusLoop();
+
+        // optimistic UI, but delay slightly so denial can arrive first
+        setTimeout(() => {
+          if (state.myMode !== 'idle') return; // if denial already set idle
+          state.myMode = 'broadcasting';
+          setMsgLocal('You are live now.');
+          renderSelf();
+        }, 250);
+
       } catch (e) {
         setMsgLocal(`Broadcast failed: ${e.message}`);
       } finally {

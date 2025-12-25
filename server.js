@@ -289,6 +289,11 @@ server.on("upgrade", (req, socket, head) => {
   socket.destroy();
 });
 
+function safeSend(ws, obj) {
+  if (!ws || ws.readyState !== 1) return;
+  ws.send(JSON.stringify(obj));
+}
+
 wssPresence.on("connection", (ws, req) => {
   const ip = getIP(req);
 
@@ -333,6 +338,14 @@ wssPresence.on("connection", (ws, req) => {
     if (msg.type === "broadcast:start") {
       if (!client.flat_id) return;
 
+      // 🔒 Deny if already broadcasting from another device for same flat
+      const existing = live.stations.get(client.flat_id);
+      if (existing) {
+        safeSend(ws, { type: "broadcast:denied", reason: "ALREADY_BROADCASTING" });
+        return;
+      }
+
+      // if was listening, stop it
       if (client.listeningTo) {
         live.stations.get(client.listeningTo)?.listeners.delete(ws);
         client.listeningTo = null;
@@ -345,8 +358,10 @@ wssPresence.on("connection", (ws, req) => {
         listeners: new Set(),
         audio: { micOn: false, sysOn: false, ptt: false, speaking: false, micLevel: 0 }
       });
+
       return;
     }
+
 
     if (msg.type === "broadcast:stop") {
       if (!client.flat_id) return;
@@ -443,11 +458,6 @@ function makeId() {
   return crypto.randomBytes(8).toString("hex");
 }
 
-function safeSend(ws, obj) {
-  if (!ws || ws.readyState !== 1) return;
-  ws.send(JSON.stringify(obj));
-}
-
 wssSignal.on("connection", (ws, req) => {
   const ip = getIP(req);
 
@@ -490,9 +500,16 @@ wssSignal.on("connection", (ws, req) => {
       sc.role = msg.role === "broadcaster" ? "broadcaster" : "listener";
 
       if (sc.role === "broadcaster") {
-        stationBroadcasterWS.set(sc.flat_id, ws);
+        // 🔒 If a broadcaster signal ws already exists for this flat, do not replace it
+        if (!stationBroadcasterWS.has(sc.flat_id)) {
+          stationBroadcasterWS.set(sc.flat_id, ws);
+        } else {
+          safeSend(ws, { type: "broadcast:denied", reason: "ALREADY_BROADCASTING" });
+          try { ws.close(1008, "already broadcasting"); } catch { }
+        }
       }
       return;
+
     }
 
     if (msg.type === "listen:join") {
