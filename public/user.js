@@ -1,5 +1,24 @@
 (() => {
   const byId = (id) => document.getElementById(id);
+
+  function normalizeFlatInput(el) {
+    if (!el) return;
+
+    el.addEventListener('input', () => {
+      let v = el.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+
+      // auto-insert dash after block letter
+      if (v.length >= 2 && v[1] !== '-') {
+        v = v[0] + '-' + v.slice(1);
+      }
+
+      // limit length: A-705 → 5 chars
+      if (v.length > 5) v = v.slice(0, 5);
+
+      el.value = v;
+    });
+  }
+
   // ✅ Mobile back/forward cache guard (prevents stale login/app pages)
   window.addEventListener('pageshow', (e) => {
     if (e.persisted) window.location.reload();
@@ -43,6 +62,7 @@
     if (window.location.pathname !== '/') return;
 
     const flatEl = byId('reg_flat_id');
+    normalizeFlatInput(flatEl);
     const nameEl = byId('reg_name');
     const btn = byId('btnReq');
     const msgEl = byId('msgReg');
@@ -68,6 +88,7 @@
     if (window.location.pathname !== '/login') return;
 
     const flatEl = byId('login_flat_id');
+    normalizeFlatInput(flatEl);
     const pinEl = byId('login_pin4');
     const passEl = byId('login_password');
     const rememberEl = byId('login_remember');
@@ -80,6 +101,10 @@
       setMsg(msgEl, 'Logging in...');
       try {
         const flat_id = (flatEl?.value || '').trim();
+        if (!/^[ABC]-\d{3}$/.test(flat_id)) {
+          setMsg(msgEl, 'Enter Flat ID like A-705', 'err');
+          return;
+        }
         const pin4 = (pinEl?.value || '').trim();
         const password = (passEl?.value || '').trim();
         const remember = rememberEl?.checked ? '1' : '0';
@@ -109,12 +134,14 @@
     const msgS3 = byId('msgS3');
 
     const s1flat = byId('s1_flat');
+    normalizeFlatInput(s1flat);
     const s1name = byId('s1_name');
     const btnS1 = byId('btnS1');
 
     const btnCheck = byId('btnCheck');
 
     const s3flat = byId('s3_flat');
+    normalizeFlatInput(s3flat);
     const s3code = byId('s3_code');
     const s3pin4 = byId('s3_pin4');
     const s3pass = byId('s3_pass');

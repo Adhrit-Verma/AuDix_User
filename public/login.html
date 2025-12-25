@@ -1,19 +1,24 @@
 <!doctype html>
 <html>
+
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>AuDiX Login</title>
   <link rel="stylesheet" href="/public/styles.css">
 </head>
+
 <body>
   <div class="wrap">
     <div class="card">
       <div class="row" style="justify-content:space-between;">
         <div>
-          <h2>AuDiX</h2>
-          <small>Ver. 2.2.0</small>
+          <div class="audixTitleRow">
+            <h2 class="audixTitle">AuDiX</h2>
+            <span class="audixVersion">v2.3.0</span>
+          </div>
           <small>Society intranet audio network</small>
+
         </div>
         <a href="/setup"><button class="secondary">New user? Setup</button></a>
       </div>
@@ -25,7 +30,9 @@
       </div>
 
       <div class="row" style="margin-top:12px;">
-        <input id="login_flat_id" placeholder="Flat ID (e.g. A-502)">
+        <input id="login_flat_id" placeholder="Flat ID (e.g. A-705)" autocapitalize="characters" autocomplete="off"
+          inputmode="text" spellcheck="false" />
+
         <input id="login_pin4" placeholder="4-digit PIN" inputmode="numeric" maxlength="4">
       </div>
 
@@ -44,8 +51,27 @@
 
       <div class="msg" id="msgLogin"></div>
     </div>
+
+    <div class="card patchCard">
+      <div class="row" style="justify-content:space-between; align-items:center;">
+        <div style="font-weight:900;">What’s new in v2.3.0</div>
+        <span class="patchBadge">STABILITY UPDATE</span>
+      </div>
+
+      <ul class="patchList">
+        <li>Smoother and easier login on mobile devices</li>
+        <li>Flat ID typing improved (automatic caps & format)</li>
+        <li>Broadcasters can now see live listener count</li>
+        <li>Microphone activity indicator added for audio confirmation</li>
+        <li>Improved reliability on slow or unstable networks</li>
+        <li>Listening status now correctly shown in Admin dashboard</li>
+      </ul>
+    </div>
+
+
   </div>
 
   <script src="/public/user.js"></script>
 </body>
+
 </html>
