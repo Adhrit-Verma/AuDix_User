@@ -1,34 +1,34 @@
 (() => {
   const byId = (id) => document.getElementById(id);
 
- function normalizeFlatInput(el) {
-  if (!el) return;
+  function normalizeFlatInput(el) {
+    if (!el) return;
 
-  const apply = () => {
-    let v = String(el.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
+    const apply = () => {
+      let v = String(el.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
 
-    // auto-insert dash after block letter
-    if (v.length >= 2 && v[1] !== '-') {
-      v = v[0] + '-' + v.slice(1);
-    }
+      // auto-insert dash after block letter
+      if (v.length >= 2 && v[1] !== '-') {
+        v = v[0] + '-' + v.slice(1);
+      }
 
-    // limit length: A-705 → 5 chars
-    if (v.length > 5) v = v.slice(0, 5);
+      // limit length: A-705 → 5 chars
+      if (v.length > 5) v = v.slice(0, 5);
 
-    el.value = v;
-  };
+      el.value = v;
+    };
 
-  // typing
-  el.addEventListener('input', apply);
+    // typing
+    el.addEventListener('input', apply);
 
-  // ✅ autofill + paste + browser suggestions
-  el.addEventListener('change', apply);
-  el.addEventListener('blur', apply);
+    // ✅ autofill + paste + browser suggestions
+    el.addEventListener('change', apply);
+    el.addEventListener('blur', apply);
 
-  // ✅ run once on load (if browser pre-filled)
-  setTimeout(apply, 0);
-  setTimeout(apply, 250);
-}
+    // ✅ run once on load (if browser pre-filled)
+    setTimeout(apply, 0);
+    setTimeout(apply, 250);
+  }
 
 
   // ✅ Mobile back/forward cache guard (prevents stale login/app pages)
@@ -113,10 +113,11 @@
       setMsg(msgEl, 'Logging in...');
       try {
         const flat_id = (flatEl?.value || '').trim();
-        if (!/^[ABC]-\d{3}$/.test(flat_id)) {
+        if (!/^[A-Z]-\d{3}$/.test(flat_id)) {
           setMsg(msgEl, 'Enter Flat ID like A-705', 'err');
           return;
         }
+
         const pin4 = (pinEl?.value || '').trim();
         const password = (passEl?.value || '').trim();
         const remember = rememberEl?.checked ? '1' : '0';
