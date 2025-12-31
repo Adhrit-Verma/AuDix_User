@@ -1,23 +1,35 @@
 (() => {
   const byId = (id) => document.getElementById(id);
 
-  function normalizeFlatInput(el) {
-    if (!el) return;
+ function normalizeFlatInput(el) {
+  if (!el) return;
 
-    el.addEventListener('input', () => {
-      let v = el.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+  const apply = () => {
+    let v = String(el.value || '').toUpperCase().replace(/[^A-Z0-9]/g, '');
 
-      // auto-insert dash after block letter
-      if (v.length >= 2 && v[1] !== '-') {
-        v = v[0] + '-' + v.slice(1);
-      }
+    // auto-insert dash after block letter
+    if (v.length >= 2 && v[1] !== '-') {
+      v = v[0] + '-' + v.slice(1);
+    }
 
-      // limit length: A-705 → 5 chars
-      if (v.length > 5) v = v.slice(0, 5);
+    // limit length: A-705 → 5 chars
+    if (v.length > 5) v = v.slice(0, 5);
 
-      el.value = v;
-    });
-  }
+    el.value = v;
+  };
+
+  // typing
+  el.addEventListener('input', apply);
+
+  // ✅ autofill + paste + browser suggestions
+  el.addEventListener('change', apply);
+  el.addEventListener('blur', apply);
+
+  // ✅ run once on load (if browser pre-filled)
+  setTimeout(apply, 0);
+  setTimeout(apply, 250);
+}
+
 
   // ✅ Mobile back/forward cache guard (prevents stale login/app pages)
   window.addEventListener('pageshow', (e) => {
